@@ -1,0 +1,9 @@
+version: '3.7'
+services:
+  web:
+    build: .
+    volumes:
+      - ~/docker-data/todo:/TODO/templates
+      -  - /home/jack/PycharmProjects/task/database:/TODO/database
+    ports:
+      - "5858:5353"
