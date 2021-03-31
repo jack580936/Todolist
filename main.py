@@ -11,7 +11,7 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy()
-app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///todo.db"
+app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database/todo.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 
