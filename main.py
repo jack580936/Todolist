@@ -5,7 +5,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
 
-
 app = Flask(__name__)
 
 bootstrap = Bootstrap(app)
@@ -69,6 +68,7 @@ def update(record_id):
     print(record)
     if request.method == 'POST':
         record.content = request.form['content']
+        record.status = request.form['status']
         try:
             db.session.commit()
             return redirect('/')
