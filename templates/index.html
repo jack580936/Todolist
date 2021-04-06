@@ -15,6 +15,50 @@
     <p>The local date and time is {{ moment(current_time).format('LLLL',True) }}.</p>
     <p>That was {{ moment(current_time).fromNow(refresh = True) }}.</p>
 
+    <div class="ui segment">
+        <form class="ui form" action="/search" method="post">
+            <div class="field">
+                <label>Search name</label>
+                <input type="text" name="target" id="target" style="width: 50%;margin-bottom: 5px">
+            </div>
+            <input class="ui blue button margin" type="submit" value="Search" style="margin-bottom: 15px">
+        </form>
+
+        <ol>
+            {% for search_result in search_results %}
+                <div class="ui segment">
+                    <li class="ui ge list">
+                        {% if search_result.done %}
+                            <a class="ui green big circular label">
+                                <del>{{ search_result.content }}</del>
+                            </a><br><br>
+
+                        {% else %}
+                            {% if search_result.status == 4 %}
+                                <a class="ui red big circular label">{{ search_result.content }}</a><br><br>
+                            {% elif search_result.status == 3 %}
+                                <a class="ui orange big circular label">{{ search_result.content }}</a><br><br>
+                            {% elif search_result.status == 2 %}
+                                <a class="ui yellow big circular label">{{ search_result.content }}</a><br><br>
+                            {% elif search_result.status == 1 %}
+                                <a class="ui olive big circular label">{{ search_result.content }}</a><br><br>
+                            {% elif search_result.status == 0 %}
+                                <a class="ui green big circular label">{{ search_result.content }}</a><br><br>
+                            {% else %}
+                                <a class="ui teal big circular label">{{ search_result.content }}</a><br><br>
+                                {#                        <span style="font-size: 24px;">{{ task.content }}</span><br>改變字體大小#}
+                            {% endif %}
+                            <a class="ui blue button margin" href="update/{{ search_result.id }}">Revise</a>
+
+                        {% endif %}
+                        {#                                               <button onclick="location.href='/done/{{ task.id }}'">DONE</button>另一種寫法#}
+                        <a class="ui green button margin" href="/done/{{ search_result.id }}">Done</a>
+                        <a class="ui red button margin" href="/delete/{{ search_result.id }}">Delete</a>
+                    </li>
+                </div>
+            {% endfor %}
+        </ol>
+    </div>
 
     <div class="ui segment">
         <h1 class="ui huge header"> TODO App</h1>
@@ -27,19 +71,19 @@
             <div class="field">
                 <label>Task name</label>
                 <input type="text" name="content" id="content" style="width: 50%;margin-bottom: 5px">
-                </div>
+            </div>
 
-                <div class="field" style="width: 50%;margin-bottom: 10px">
-                    <label>Task deadline</label>
-                    <select class="ui search dropdown" name="status">
-                        <option value="0">急</option>
-                        <option value="1">很急</option>
-                        <option value="2">很急很急</option>
-                        <option value="3">很急很急很急</option>
-                        <option value="4">很急很急很急很急</option>
-                    </select>
-                </div>
-                <input class="ui blue button margin" type="submit" value="Add task" style="margin-bottom: 15px">
+            <div class="field" style="width: 50%;margin-bottom: 10px">
+                <label>Task deadline</label>
+                <select class="ui search dropdown" name="status">
+                    <option value="0">急</option>
+                    <option value="1">很急</option>
+                    <option value="2">很急很急</option>
+                    <option value="3">很急很急很急</option>
+                    <option value="4">很急很急很急很急</option>
+                </select>
+            </div>
+            <input class="ui blue button margin" type="submit" value="Add task" style="margin-bottom: 15px">
         </form>
 
         <ol>

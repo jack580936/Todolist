@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from flask import Flask, jsonify, request, abort, render_template, redirect, flash, url_for
+from flask import Flask, jsonify, request, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
@@ -12,6 +12,8 @@ moment = Moment(app)
 db = SQLAlchemy()
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database/todo.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['JSON_SORT_KEYS'] = False  # json排序
+app.config['JSON_AS_ASCII'] = False  # 顯示中文 而不是ascii
 
 
 class Todo(db.Model):
@@ -58,8 +60,40 @@ def read():
     all_results = Todo.query.order_by(Todo.create_datetime.desc()).all()
     result = []
     for item in all_results:
-        result.append({"name": item.content, "create_time": item.create_datetime})
+        result.append({"name": item.content, "create_time": item.create_datetime,
+                       "done": item.done, "task_status": item.status})
     return jsonify(result)
+
+
+@app.route("/read_by_status", methods=['GET'])
+def read_by_status():
+    all_results = Todo.query.order_by(Todo.status.desc()).all()
+    result = []
+    for item in all_results:
+        result.append({"name": item.content, "create_time": item.create_datetime,
+                       "done": item.done, "task_status": item.status})
+    return jsonify(result)
+
+
+@app.route("/search/<search_name>", methods=['GET'])
+@app.route("/search", methods=['POST'])
+def search(search_name=None):
+    all_results = Todo.query.order_by(Todo.create_datetime).all()
+    search_results = []
+    tasks = Todo.query.order_by(Todo.status.desc()).all()
+    if request.method == 'POST':
+        task_content = request.form['target']
+        search_results = Todo.query.filter(Todo.content.like('%' + task_content + '%')).order_by(Todo.status.desc())
+        return render_template("index.html", tasks=tasks, search_results=search_results, current_time=datetime.utcnow())
+    else:
+        for item in all_results:
+            if search_name in item.content:
+                search_results.append({"name": item.content, "create_time": item.create_datetime,
+                                       "done": item.done, "task_status": item.status})
+        if search_results:
+            return jsonify(search_results)
+        else:
+            return jsonify("NOT FOUND")
 
 
 @app.route("/update/<record_id>", methods=['GET', 'POST'])
@@ -106,7 +140,7 @@ def done(record_id):
 
 @app.route("/", methods=['POST', 'GET'])
 @app.route("/<user>", methods=['GET'])
-def index(user=None):
+def index(user=None, search_results=None):
     if request.method == 'POST':
         task_content = request.form['content']
         task_status = request.form['status']
@@ -121,7 +155,7 @@ def index(user=None):
 
     else:
         tasks = Todo.query.order_by(Todo.status.desc()).all()
-        return render_template("index.html", tasks=tasks, user=user, current_time=datetime.utcnow())
+        return render_template("index.html", tasks=tasks, user=user, search=search_results, current_time=datetime.utcnow())
 
 
 if __name__ == '__main__':
