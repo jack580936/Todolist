@@ -6,4 +6,4 @@ services:
 #      - ~/docker-data/todo:/TODO/templates 錯的
       - /home/jack/PycharmProjects/task/database:/TODO/database
     ports:
-      - "5858:5353"
+      - "5555:5353"
