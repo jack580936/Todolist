@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% extends 'base.html' %}
+
+
+{% block page_content %}
+
+<div class="content">
+    <h1>Update Task</h1>
+    <form class="ui form" action="/update/{{ task.id }}" method="POST">
+        <div class="fields">
+            <div class="five wide field">
+                <label>Task name</label>
+                <input type="text" name="content" id="content" value="{{ task.content }}">
+                </div>
+                <div class="three wide field">
+                    <label>Task deadline</label>
+                    <select class="ui search dropdown" name="status" value="{{ task.status }}">
+                        <option value="0">急</option>
+                        <option value="1">很急</option>
+                        <option value="2">很急很急</option>
+                        <option value="3">很急很急很急</option>
+                        <option value="4">很急很急很急很急</option>
+                    </select>
+                </div>
+        </div>
+        <input class="ui gray button" type="submit" value="Update">
+    </form>
+</div>
+
+{% endblock %}

@@ -8,4 +8,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5353
 
-CMD python main.py
+CMD python task.py
